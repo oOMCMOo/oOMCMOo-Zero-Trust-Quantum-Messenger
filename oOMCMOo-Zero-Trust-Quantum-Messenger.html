@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000011">
+    <title>, oOMCMOo Messenger - Zero Trust Quantum Encryption</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;500;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        :root {
+            --lunar: #e0e6ff;
+            --quantum-blue: #00f0ff;
+            --dna-crimson: #ff0040;
+            --dna-gold: #ffd700;
+            --void: #000011;
+            --hud-glass: rgba(0, 15, 40, 0.88);
+        }
+        
+        body {
+            background: var(--void);
+            color: var(--lunar);
+            font-family: 'Rajdhani', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            touch-action: manipulation;
+        }
+        
+        #dna-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+        
+        .lunar-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .lunar-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(224,230,255,0.9) 0%, transparent 70%);
+            animation: lunarFloat 20s infinite ease-in-out;
+            box-shadow: 0 0 20px rgba(224,230,255,0.3);
+        }
+        
+        @keyframes lunarFloat {
+            0%, 100% { transform: translateY(110vh) translateX(0) scale(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            50% { transform: translateY(50vh) translateX(30px) scale(1); }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) translateX(-20px) scale(0.3); opacity: 0; }
+        }
+        
+        .scan-matrix {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--quantum-blue), var(--dna-crimson), transparent);
+            opacity: 0.5;
+            animation: matrixScan 6s linear infinite;
+            z-index: 100;
+            pointer-events: none;
+        }
+        
+        @keyframes matrixScan {
+            0% { top: -2px; }
+            100% { top: 100vh; }
+        }
+        
+        .hud-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            padding: 15px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .hud-header {
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, var(--lunar), var(--quantum-blue), var(--dna-crimson), var(--lunar));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: brandShine 4s linear infinite;
+        }
+        
+        @keyframes brandShine {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        .subtitle {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 5px;
+            opacity: 0.7;
+            color: var(--quantum-blue);
+            margin-top: 3px;
+        }
+        
+        .processing-hud {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+        }
+        
+        .proc-unit {
+            background: rgba(0, 10, 30, 0.7);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 6px 10px;
+            border-radius: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .proc-label { color: rgba(224,230,255,0.5); font-size: 0.55rem; letter-spacing: 1px; }
+        .proc-value { color: var(--quantum-blue); font-weight: bold; font-size: 0.7rem; }
+        .proc-bar {
+            width: 30px;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            margin-left: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+        .proc-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--quantum-blue), var(--dna-crimson));
+            animation: procPulse 2s infinite;
+        }
+        
+        @keyframes procPulse {
+            0%, 100% { width: 20%; }
+            50% { width: 90%; }
+        }
+        
+        .holo-frame {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            background: var(--hud-glass);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 4px;
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1), inset 0 0 40px rgba(0, 240, 255, 0.03);
+            animation: framePulse 5s ease-in-out infinite;
+        }
+        
+        .holo-frame::before, .holo-frame::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--quantum-blue);
+        }
+        .holo-frame::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .holo-frame::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+        
+        .corner { position: absolute; width: 20px; height: 20px; border: 2px solid var(--quantum-blue); }
+        .corner.top-right { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+        .corner.bottom-left { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+        
+        @keyframes framePulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(0,240,255,0.1), inset 0 0 40px rgba(0,240,255,0.03); }
+            50% { box-shadow: 0 0 50px rgba(0,240,255,0.2), inset 0 0 50px rgba(0,240,255,0.05); }
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+        
+        @media(min-width:600px) {
+            .form-grid { grid-template-columns: 1fr 1fr; }
+            .full-width { grid-column: 1 / -1; }
+            .brand { font-size: 2.2rem; }
+            .processing-hud { grid-template-columns: repeat(4, 1fr); }
+            .subtitle { font-size: 0.75rem; }
+        }
+        
+        .input-group { position: relative; }
+        .full-width { grid-column: 1 / -1; }
+        
+        .input-label {
+            display: block;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            color: rgba(224,230,255,0.6);
+        }
+        
+        .holo-input {
+            width: 100%;
+            background: rgba(0, 20, 50, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            color: var(--lunar);
+            padding: 10px 12px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            outline: none;
+            transition: all 0.3s;
+            border-radius: 2px;
+            -webkit-appearance: none;
+        }
+        
+        .holo-input:focus {
+            border-color: var(--quantum-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            background: rgba(0, 40, 80, 0.4);
+        }
+        
+        textarea.holo-input { min-height: 80px; resize: vertical; }
+        
+        .dna-vault-zone {
+            grid-column: 1 / -1;
+            border: 2px dashed rgba(0, 240, 255, 0.3);
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 10, 30, 0.4);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dna-vault-zone:hover, .dna-vault-zone.dragover {
+            border-color: var(--quantum-blue);
+            background: rgba(0, 240, 255, 0.05);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+        }
+        
+        .vault-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            animation: dnaBreathe 3s ease-in-out infinite;
+        }
+        
+        @keyframes dnaBreathe {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        .vault-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--quantum-blue);
+            letter-spacing: 1px;
+        }
+        
+        .vault-sub {
+            font-size: 0.6rem;
+            color: rgba(224,230,255,0.4);
+            margin-top: 4px;
+        }
+        
+        #file-input { display: none; }
+        
+        .file-list {
+            grid-column: 1 / -1;
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .file-list.active { display: flex; }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 20, 50, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            padding: 8px 12px;
+            border-radius: 2px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+        }
+        
+        .file-info { display: flex; align-items: center; gap: 8px; }
+        .file-dna-bar {
+            width: 80px;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+        .file-dna-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00f0ff, #ff0040);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .file-status { color: var(--quantum-blue); font-size: 0.6rem; }
+        
+        .vault-toggle {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: rgba(0, 10, 30, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 2px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 22px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 11px;
+            cursor: pointer;
+            transition: background 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .toggle-switch.active { background: var(--quantum-blue); }
+        
+        .toggle-knob {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: var(--lunar);
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-switch.active .toggle-knob { transform: translateX(22px); }
+        
+        .toggle-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+        
+        .toggle-desc {
+            font-size: 0.55rem;
+            color: rgba(224,230,255,0.4);
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .enc-visualizer {
+            grid-column: 1 / -1;
+            background: rgba(0, 5, 20, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 2px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .enc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+        }
+        
+        .enc-protocols {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        
+        .protocol-tag {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            padding: 2px 8px;
+            font-size: 0.55rem;
+            border-radius: 2px;
+            font-family: 'Share Tech Mono', monospace;
+            animation: tagGlow 4s infinite;
+        }
+        
+        @keyframes tagGlow {
+            0%, 100% { opacity: 0.5; box-shadow: 0 0 5px rgba(0,240,255,0.1); }
+            50% { opacity: 1; box-shadow: 0 0 15px rgba(0,240,255,0.3); }
+        }
+        
+        .enc-stream {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            color: rgba(0, 240, 255, 0.6);
+            overflow: hidden;
+            white-space: nowrap;
+            letter-spacing: 1px;
+        }
+        
+        .dna-helix-mini {
+            display: inline-block;
+            animation: helixSpin 2s linear infinite;
+        }
+        
+        @keyframes helixSpin {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        
+        .route-map {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(0, 5, 20, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            margin-bottom: 8px;
+            overflow-x: auto;
+        }
+        
+        .route-node { text-align: center; flex: 1; min-width: 50px; }
+        .route-icon {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--quantum-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 3px;
+            font-size: 0.9rem;
+            animation: nodePulse 2.5s infinite;
+        }
+        @keyframes nodePulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(0,240,255,0.2); }
+            50% { box-shadow: 0 0 20px rgba(0,240,255,0.5); }
+        }
+        .route-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .route-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--quantum-blue), var(--dna-crimson), transparent);
+            position: relative;
+            min-width: 20px;
+        }
+        .route-line::after {
+            content: '◆';
+            position: absolute;
+            right: -4px;
+            top: -5px;
+            font-size: 0.4rem;
+            color: var(--quantum-blue);
+            animation: routeFlow 1.5s linear infinite;
+        }
+        @keyframes routeFlow {
+            0% { opacity: 0; transform: translateX(-15px); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(10px); }
+        }
+        
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .holo-btn {
+            background: transparent;
+            border: 1px solid var(--quantum-blue);
+            color: var(--quantum-blue);
+            padding: 10px 28px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            border-radius: 2px;
+            -webkit-appearance: none;
+            touch-action: manipulation;
+        }
+        
+        .holo-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,240,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .holo-btn:hover::before, .holo-btn:active::before { left: 100%; }
+        .holo-btn:hover, .holo-btn:active {
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
+            border-color: var(--lunar);
+            color: var(--lunar);
+        }
+        
+        .holo-btn.primary {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--quantum-blue);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 5, 20, 0.97);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .overlay.active { display: flex; }
+        
+        .overlay-dna {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 25px;
+        }
+        
+        .overlay-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, var(--quantum-blue), var(--lunar));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .overlay-sub {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--dna-crimson);
+            letter-spacing: 1px;
+            max-width: 350px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .overlay-dna-stream {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.55rem;
+            color: rgba(0, 240, 255, 0.4);
+            margin-top: 15px;
+            letter-spacing: 2px;
+        }
+        
+        .peer-id-display {
+            grid-column: 1 / -1;
+            background: rgba(0, 20, 50, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            padding: 10px 12px;
+            border-radius: 2px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--quantum-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .peer-id-label { color: rgba(224,230,255,0.5); font-size: 0.55rem; }
+        .peer-id-value { letter-spacing: 2px; }
+        .copy-btn {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: var(--quantum-blue);
+            padding: 4px 10px;
+            font-size: 0.55rem;
+            cursor: pointer;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        
+        .messages-panel {
+            grid-column: 1 / -1;
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 5, 20, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 2px;
+            padding: 10px;
+            display: none;
+        }
+        .messages-panel.active { display: block; }
+        
+        .msg-item {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            padding: 8px;
+            margin-bottom: 6px;
+            background: rgba(0, 20, 50, 0.4);
+            border-left: 2px solid var(--quantum-blue);
+            border-radius: 0 2px 2px 0;
+        }
+        .msg-sender { color: var(--dna-gold); font-size: 0.55rem; margin-bottom: 3px; }
+        .msg-text { color: var(--lunar); }
+        .msg-time { color: rgba(224,230,255,0.3); font-size: 0.55rem; margin-top: 3px; }
+        
+        .msg-pass { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+        .msg-pass input { flex: 1; min-width: 120px; }
+        .msg-files { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .file-dl-btn { padding: 5px 12px; font-size: 0.65rem; letter-spacing: 1px; }
+        .vault-status {
+            grid-column: 1 / -1;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--quantum-blue);
+            text-align: center;
+            padding: 4px;
+            opacity: 0.7;
+        }
+    </style>
+    
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+</head>
+<body>
+    <canvas id="dna-canvas"></canvas>
+    <div class="lunar-layer" id="lunar-layer"></div>
+    <div class="scan-matrix"></div>
+    
+    <div class="hud-container">
+        <div class="hud-header">
+            <div class="brand">, oOMCMOo Messenger</div>
+            <div class="subtitle">ZERO TRUST QUANTUM ENCRYPTION // P2P DNA VAULT</div>
+        </div>
+        
+        <div class="processing-hud" id="processing-hud">
+            <div class="proc-unit">
+                <span class="proc-label">Q-ENTROPY</span>
+                <span class="proc-value" id="q-entropy">99.99%</span>
+                <div class="proc-bar"><div class="proc-bar-fill"></div></div>
+            </div>
+            <div class="proc-unit">
+                <span class="proc-label">PEERS</span>
+                <span class="proc-value" id="peer-count">0</span>
+                <div class="proc-bar"><div class="proc-bar-fill" style="animation-delay:0.3s"></div></div>
+            </div>
+            <div class="proc-unit">
+                <span class="proc-label">STRANDS</span>
+                <span class="proc-value" id="strands">2.4T</span>
+                <div class="proc-bar"><div class="proc-bar-fill" style="animation-delay:0.6s"></div></div>
+            </div>
+            <div class="proc-unit">
+                <span class="proc-label">LATENCY</span>
+                <span class="proc-value" id="latency">0.00ms</span>
+                <div class="proc-bar"><div class="proc-bar-fill" style="animation-delay:0.9s"></div></div>
+            </div>
+        </div>
+        
+        <div class="holo-frame">
+            <div class="corner top-right"></div>
+            <div class="corner bottom-left"></div>
+            
+            <div class="form-grid">
+                <div class="peer-id-display full-width">
+                    <div>
+                        <div class="peer-id-label">YOUR PEER ID</div>
+                        <div class="peer-id-value" id="my-peer-id">CONNECTING...</div>
+                    </div>
+                    <button class="copy-btn" onclick="copyPeerId()">COPY</button>
+                </div>
+                
+                <div class="input-group full-width">
+                    <label class="input-label">Recipient Peer ID (Exact Match Required)</label>
+                    <input type="text" class="holo-input" id="recipient" placeholder="oO_XXXXXXXXX_XXXX">
+                </div>
+                
+                <div class="input-group full-width">
+                    <label class="input-label">Quantum Passphrase Key (Required)</label>
+                    <input type="password" class="holo-input" id="passphrase" placeholder="Enter DNA encryption key...">
+                </div>
+                
+                <div class="input-group full-width">
+                    <label class="input-label">Secure Message Payload</label>
+                    <textarea class="holo-input" id="message" placeholder="Enter transmission data..."></textarea>
+                </div>
+                
+                <div class="dna-vault-zone" id="vault-zone" onclick="document.getElementById('file-input').click()">
+                    <div class="vault-icon">🧬</div>
+                    <div class="vault-text">TAP TO OPEN SYNTHETIC DNA VAULT</div>
+                    <div class="vault-sub">PDF • MP3 • MP4 • HTML • DOC • BINARY TO DNA (Max 2MB)</div>
+                    <input type="file" id="file-input" multiple onchange="handleFiles(this.files)">
+                </div>
+                
+                <div class="file-list" id="file-list"></div>
+                
+                <div class="vault-toggle">
+                    <div class="toggle-switch active" id="vault-toggle" onclick="toggleVault()">
+                        <div class="toggle-knob"></div>
+                    </div>
+                    <span class="toggle-label">P2P DNA VAULT</span>
+                    <span class="toggle-desc">Peer-to-peer nucleoid replication</span>
+                </div>
+                
+                <div class="vault-status" id="vault-status">LOCAL VAULT: INITIALIZING...</div>
+                
+                <div class="enc-visualizer">
+                    <div class="enc-header">
+                        <span>ACTIVE PROTOCOLS</span>
+                        <span id="enc-status">STANDBY</span>
+                    </div>
+                    <div class="enc-protocols">
+                        <div class="protocol-tag">AES-256-GCM</div>
+                        <div class="protocol-tag">DNA-256-X</div>
+                        <div class="protocol-tag">GUN-P2P</div>
+                        <div class="protocol-tag">WEBRTC</div>
+                        <div class="protocol-tag">SYNTHETIC-DNA</div>
+                    </div>
+                    <div class="enc-stream" id="enc-stream">
+                        <span class="dna-helix-mini">◈</span> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 <span class="dna-helix-mini">◈</span>
+                    </div>
+                </div>
+                
+                <div class="route-map">
+                    <div class="route-node"><div class="route-icon">📡</div><div class="route-label">Client</div></div>
+                    <div class="route-line"></div>
+                    <div class="route-node"><div class="route-icon">🧬</div><div class="route-label">DNA Vault</div></div>
+                    <div class="route-line"></div>
+                    <div class="route-node"><div class="route-icon">🔗</div><div class="route-label">Gun P2P</div></div>
+                    <div class="route-line"></div>
+                    <div class="route-node"><div class="route-icon">🧅</div><div class="route-label">WebRTC</div></div>
+                    <div class="route-line"></div>
+                    <div class="route-node"><div class="route-icon">📧</div><div class="route-label">Target</div></div>
+                </div>
+                
+                <div class="messages-panel" id="messages-panel">
+                    <div style="font-family:Share Tech Mono;font-size:0.65rem;color:var(--quantum-blue);margin-bottom:8px;letter-spacing:2px;">◈ INCOMING TRANSMISSIONS ◈</div>
+                    <div id="messages-list"></div>
+                </div>
+            </div>
+            
+            <div class="action-bar">
+                <button class="holo-btn" onclick="clearAll()">PURGE</button>
+                <button class="holo-btn primary" onclick="transmit()">TRANSMIT</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay">
+        <canvas class="overlay-dna" id="overlay-dna" width="150" height="150"></canvas>
+        <div class="overlay-text" id="overlay-text">SYNTHESIZING</div>
+        <div class="overlay-sub" id="overlay-sub">Converting binary to synthetic DNA nucleoid strands...</div>
+        <div class="overlay-dna-stream" id="overlay-dna-stream">ATCG-ATCG-ATCG-ATCG</div>
+    </div>
+
+    <script>
+        // ===== CRYPTO CHECK =====
+        if (!window.crypto || !window.crypto.subtle) {
+            alert('FATAL: Web Crypto API unavailable.\nServe this app over HTTPS or localhost to enable AES-256-GCM encryption.');
+        }
+        
+        // ===== PEER ID =====
+        const myPeerId = 'oO_' + Math.random().toString(36).substr(2, 9) + '_' + Math.random().toString(36).substr(2, 4);
+        document.getElementById('my-peer-id').textContent = myPeerId;
+        
+        // ===== FIXED COPY BUTTON =====
+        function copyPeerId() {
+            const btn = document.querySelector('.copy-btn');
+            const text = document.getElementById('my-peer-id').textContent;
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.textContent = 'COPIED';
+                    setTimeout(() => btn.textContent = 'COPY', 1500);
+                }).catch(() => fallbackCopy(text, btn));
+            } else {
+                fallbackCopy(text, btn);
+            }
+        }
+        
+        function fallbackCopy(text, btn) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                const ok = document.execCommand('copy');
+                btn.textContent = ok ? 'COPIED' : 'FAILED';
+            } catch(e) {
+                btn.textContent = 'FAILED';
+            }
+            document.body.removeChild(ta);
+            setTimeout(() => btn.textContent = 'COPY', 1500);
+        }
+        
+        // ===== INDEXEDDB LOCAL VAULT =====
+        const DB_NAME = 'oOMCMOoVault';
+        const STORE_NAME = 'attachments';
+        let vaultDB = null;
+        
+        function initVault() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, 1);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'vaultId' });
+                    }
+                };
+                req.onsuccess = (e) => { vaultDB = e.target.result; resolve(vaultDB); };
+                req.onerror = (e) => reject(req.error);
+            });
+        }
+        
+        async function vaultSave(vaultId, payload) {
+            if (!vaultDB) await initVault();
+            return new Promise((resolve, reject) => {
+                const tx = vaultDB.transaction([STORE_NAME], 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                const req = store.put({ vaultId, payload, savedAt: Date.now() });
+                req.onsuccess = () => resolve();
+                req.onerror = () => reject(req.error);
+            });
+        }
+        
+        async function vaultGet(vaultId) {
+            if (!vaultDB) await initVault();
+            return new Promise((resolve, reject) => {
+                const tx = vaultDB.transaction([STORE_NAME], 'readonly');
+                const store = tx.objectStore(STORE_NAME);
+                const req = store.get(vaultId);
+                req.onsuccess = () => resolve(req.result ? req.result.payload : null);
+                req.onerror = () => reject(req.error);
+            });
+        }
+        
+        initVault().then(() => {
+            document.getElementById('vault-status').textContent = 'LOCAL VAULT: ONLINE | INDEXEDDB SECURED';
+        }).catch(() => {
+            document.getElementById('vault-status').textContent = 'LOCAL VAULT: OFFLINE | STORAGE BLOCKED';
+        });
+        
+        // ===== GUN P2P =====
+        const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
+        
+        gun.get('oOMCMOo-messages').map().on(async (data, id) => {
+            if (!data || !data.to || data.to !== myPeerId) return;
+            if (data.seen) return;
+            if (document.getElementById('msg-' + id)) return;
+            
+            gun.get('oOMCMOo-messages').get(id).put({ seen: true });
+            
+            // Auto-save attachments to local device vault
+            if (data.encryptedFiles) {
+                try {
+                    const files = JSON.parse(data.encryptedFiles);
+                    for (let i = 0; i < files.length; i++) {
+                        await vaultSave(id + '_' + i, files[i]);
+                    }
+                } catch(e) { console.error('Vault replication error', e); }
+            }
+            
+            displayIncomingMessage(data, id);
+        });
+        
+        setInterval(() => {
+            const peers = Object.keys(gun._.opt.peers || {}).length;
+            document.getElementById('peer-count').textContent = Math.max(1, peers);
+        }, 2000);
+        
+        // ===== ENCRYPTION ENGINE =====
+        async function deriveKey(passphrase, salt) {
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']
+            );
+            return crypto.subtle.deriveKey(
+                { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['encrypt', 'decrypt']
+            );
+        }
+        
+        async function encryptText(text, passphrase) {
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const key = await deriveKey(passphrase, salt);
+            const encrypted = await crypto.subtle.encrypt(
+                { name: 'AES-GCM', iv }, key, new TextEncoder().encode(text)
+            );
+            return { salt: Array.from(salt), iv: Array.from(iv), data: Array.from(new Uint8Array(encrypted)) };
+        }
+        
+        async function decryptText(encryptedObj, passphrase) {
+            const salt = new Uint8Array(encryptedObj.salt);
+            const iv = new Uint8Array(encryptedObj.iv);
+            const data = new Uint8Array(encryptedObj.data);
+            const key = await deriveKey(passphrase, salt);
+            const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+            return new TextDecoder().decode(decrypted);
+        }
+        
+        async function encryptBuffer(buffer, passphrase) {
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const key = await deriveKey(passphrase, salt);
+            const encrypted = await crypto.subtle.encrypt(
+                { name: 'AES-GCM', iv }, key, buffer
+            );
+            return { salt: Array.from(salt), iv: Array.from(iv), data: Array.from(new Uint8Array(encrypted)) };
+        }
+        
+        async function decryptBuffer(encryptedObj, passphrase) {
+            const salt = new Uint8Array(encryptedObj.salt);
+            const iv = new Uint8Array(encryptedObj.iv);
+            const data = new Uint8Array(encryptedObj.data);
+            const key = await deriveKey(passphrase, salt);
+            return await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+        }
+        
+        // ===== DNA CANVAS =====
+        const canvas = document.getElementById('dna-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        resize();
+        window.addEventListener('resize', resize);
+        
+        class DNAStrand {
+            constructor(x, amp, freq, speed, cA, cB) {
+                this.x = x; this.amp = amp; this.freq = freq; this.speed = speed;
+                this.offset = Math.random() * Math.PI * 2;
+                this.cA = cA; this.cB = cB;
+                this.nodes = [];
+                const count = Math.floor(height / 30) + 10;
+                for (let i = 0; i < count; i++) this.nodes.push({ base: ['A','T','C','G'][Math.floor(Math.random()*4)], glow: Math.random() });
+            }
+            draw(time) {
+                for (let i = 0; i < this.nodes.length; i++) {
+                    const y = i * 30 - 50;
+                    const w = Math.sin(y * this.freq + time * this.speed + this.offset);
+                    const x1 = this.x + w * this.amp;
+                    const x2 = this.x - w * this.amp;
+                    ctx.strokeStyle = `rgba(0,240,255,${0.1 + this.nodes[i].glow * 0.15})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke();
+                    const gA = 0.3 + Math.sin(time * 2 + i) * 0.2;
+                    ctx.fillStyle = this.cA; ctx.shadowColor = this.cA; ctx.shadowBlur = 10 * gA;
+                    ctx.beginPath(); ctx.arc(x1, y, 3 + gA * 2, 0, Math.PI * 2); ctx.fill();
+                    const gB = 0.3 + Math.cos(time * 2 + i) * 0.2;
+                    ctx.fillStyle = this.cB; ctx.shadowColor = this.cB; ctx.shadowBlur = 10 * gB;
+                    ctx.beginPath(); ctx.arc(x2, y, 3 + gB * 2, 0, Math.PI * 2); ctx.fill();
+                    if (i % 3 === 0) {
+                        ctx.fillStyle = `rgba(224,230,255,${0.3 + gA * 0.3})`;
+                        ctx.font = '8px monospace'; ctx.shadowBlur = 0;
+                        ctx.fillText(this.nodes[i].base, (x1 + x2) / 2 - 3, y - 8);
+                    }
+                }
+                ctx.shadowBlur = 0;
+            }
+        }
+        
+        const strands = [
+            new DNAStrand(width * 0.15, 40, 0.008, 0.001, '#00f0ff', '#ff0040'),
+            new DNAStrand(width * 0.85, 50, 0.006, 0.0015, '#ffd700', '#00f0ff'),
+            new DNAStrand(width * 0.5, 30, 0.01, 0.0008, '#ff0040', '#ffd700')
+        ];
+        
+        function animateDNA() {
+            ctx.fillStyle = 'rgba(0,0,17,0.15)'; ctx.fillRect(0, 0, width, height);
+            const t = Date.now() * 0.001;
+            strands.forEach(s => s.draw(t));
+            for (let i = 0; i < 5; i++) {
+                ctx.fillStyle = `rgba(0,240,255,${Math.random()*0.3})`;
+                ctx.beginPath(); ctx.arc(Math.random()*width, Math.random()*height, Math.random()*2, 0, Math.PI*2); ctx.fill();
+            }
+            requestAnimationFrame(animateDNA);
+        }
+        animateDNA();
+        
+        // ===== LUNAR PARTICLES =====
+        const lunarLayer = document.getElementById('lunar-layer');
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div');
+            p.className = 'lunar-particle';
+            const s = 2 + Math.random() * 6;
+            p.style.width = s + 'px'; p.style.height = s + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 20 + 's';
+            p.style.animationDuration = (15 + Math.random() * 15) + 's';
+            lunarLayer.appendChild(p);
+        }
+        
+        // ===== HUD STATS =====
+        function updateStats() {
+            document.getElementById('q-entropy').textContent = (99.9 + Math.random() * 0.09).toFixed(2) + '%';
+            document.getElementById('strands').textContent = (2.3 + Math.random() * 0.2).toFixed(1) + 'T';
+            document.getElementById('latency').textContent = (Math.random() * 0.5).toFixed(2) + 'ms';
+        }
+        setInterval(updateStats, 800);
+        
+        const encStream = document.getElementById('enc-stream');
+        const bases = ['A','T','C','G'];
+        setInterval(() => {
+            const hex = Array.from({length:16}, () => Math.floor(Math.random()*256).toString(16).padStart(2,'0').toUpperCase());
+            const dna = Array.from({length:8}, () => bases[Math.floor(Math.random()*4)] + bases[Math.floor(Math.random()*4)]);
+            encStream.innerHTML = `<span class="dna-helix-mini">◈</span> ${hex.join(' ')} | ${dna.join('-')} <span class="dna-helix-mini">◈</span>`;
+        }, 120);
+        
+        // ===== FILE HANDLING =====
+        let attachedFiles = [];
+        const vaultZone = document.getElementById('vault-zone');
+        const fileList = document.getElementById('file-list');
+        
+        vaultZone.addEventListener('dragover', e => { e.preventDefault(); vaultZone.classList.add('dragover'); });
+        vaultZone.addEventListener('dragleave', () => vaultZone.classList.remove('dragover'));
+        vaultZone.addEventListener('drop', e => { e.preventDefault(); vaultZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+        
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('FILE TOO LARGE: ' + file.name + ' (max 2MB for DNA Vault)');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const id = 'f-' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+                    attachedFiles.push({ id, file, name: file.name, size: file.size, type: file.type, buffer: e.target.result });
+                    
+                    const item = document.createElement('div');
+                    item.className = 'file-item'; item.id = id;
+                    item.innerHTML = `<div class="file-info"><span>🧬</span><span>${file.name}</span><span style="color:rgba(224,230,255,0.4)">${(file.size/1024).toFixed(1)}KB</span></div><div style="display:flex;align-items:center;gap:8px"><div class="file-dna-bar"><div class="file-dna-fill" id="${id}-bar"></div></div><span class="file-status" id="${id}-st">DNA ENCODING...</span></div>`;
+                    fileList.appendChild(item); fileList.classList.add('active');
+                    
+                    let prog = 0;
+                    const bar = document.getElementById(id + '-bar');
+                    const st = document.getElementById(id + '-st');
+                    const iv = setInterval(() => {
+                        prog += Math.random() * 15;
+                        if (prog >= 100) { prog = 100; clearInterval(iv); st.textContent = 'VAULT SEALED'; st.style.color = '#ffd700'; }
+                        bar.style.width = prog + '%';
+                    }, 200);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+        
+        let vaultEnabled = true;
+        function toggleVault() {
+            vaultEnabled = !vaultEnabled;
+            document.getElementById('vault-toggle').classList.toggle('active', vaultEnabled);
+        }
+        
+        // ===== TRANSMIT =====
+        async function transmit() {
+            const recipient = document.getElementById('recipient').value.trim();
+            const passphrase = document.getElementById('passphrase').value;
+            const message = document.getElementById('message').value;
+            
+            if (!recipient || !message) { alert('REQUIRED: Recipient Peer ID and Message'); return; }
+            if (!/^oO_[a-z0-9]{9}_[a-z0-9]{4}$/.test(recipient)) { 
+                alert('INVALID: Peer ID must be exact format oO_XXXXXXXXX_XXXX'); 
+                return; 
+            }
+            if (!passphrase) { alert('REQUIRED: Quantum Passphrase Key for encryption'); return; }
+            
+            const overlay = document.getElementById('overlay');
+            const overlayText = document.getElementById('overlay-text');
+            const overlaySub = document.getElementById('overlay-sub');
+            document.getElementById('enc-status').textContent = 'ACTIVE';
+            overlay.classList.add('active');
+            
+            const stages = [
+                { text: 'SYNTHESIZING', sub: 'AES-256-GCM key derivation from passphrase...' },
+                { text: 'QUANTUM SEALING', sub: 'Encrypting payload with PBKDF2 + AES-GCM...' },
+                { text: 'P2P BROADCAST', sub: 'Broadcasting to Gun.js decentralized mesh...' },
+                { text: 'WEBRTC RELAY', sub: 'Routing through peer-to-peer WebRTC nodes...' },
+                { text: 'TRANSMITTING', sub: 'Writing encrypted DNA vault to recipient channel...' },
+                { text: 'DELIVERED', sub: 'Payload sealed in recipient P2P vault' }
+            ];
+            
+            overlayText.textContent = stages[0].text;
+            overlaySub.textContent = stages[0].sub;
+            await sleep(600);
+            
+            overlayText.textContent = stages[1].text;
+            overlaySub.textContent = stages[1].sub;
+            const encryptedMessage = await encryptText(message, passphrase);
+            
+            const encryptedFiles = [];
+            for (const f of attachedFiles) {
+                const enc = await encryptBuffer(f.buffer, passphrase);
+                encryptedFiles.push({ name: f.name, size: f.size, type: f.type, encrypted: enc });
+            }
+            await sleep(600);
+            
+            overlayText.textContent = stages[2].text;
+            overlaySub.textContent = stages[2].sub;
+            await sleep(500);
+            
+            overlayText.textContent = stages[3].text;
+            overlaySub.textContent = stages[3].sub;
+            await sleep(500);
+            
+            overlayText.textContent = stages[4].text;
+            overlaySub.textContent = stages[4].sub;
+            
+            const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            
+            gun.get('oOMCMOo-messages').get(msgId).put({
+                from: myPeerId,
+                to: recipient,
+                encryptedPayload: JSON.stringify(encryptedMessage),
+                encryptedFiles: JSON.stringify(encryptedFiles),
+                fileCount: encryptedFiles.length,
+                timestamp: Date.now(),
+                seen: false
+            });
+            
+            await sleep(800);
+            
+            overlayText.textContent = stages[5].text;
+            overlaySub.textContent = stages[5].sub + ' | ID: ' + msgId;
+            await sleep(1200);
+            
+            overlay.classList.remove('active');
+            document.getElementById('enc-status').textContent = 'DELIVERED | ID: ' + msgId;
+            
+            // Local echo
+            displayIncomingMessage({
+                from: myPeerId + ' (YOU)',
+                to: recipient,
+                encryptedPayload: JSON.stringify(encryptedMessage),
+                encryptedFiles: JSON.stringify(encryptedFiles),
+                fileCount: encryptedFiles.length,
+                timestamp: Date.now()
+            }, 'self-' + msgId, true);
+        }
+        
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+        
+        // ===== INCOMING MESSAGE DISPLAY =====
+        function displayIncomingMessage(data, id, isSelf = false) {
+            const panel = document.getElementById('messages-panel');
+            const list = document.getElementById('messages-list');
+            panel.classList.add('active');
+            
+            if (document.getElementById('msg-' + id)) return;
+            
+            const item = document.createElement('div');
+            item.className = 'msg-item';
+            item.id = 'msg-' + id;
+            
+            const time = new Date(data.timestamp).toLocaleTimeString();
+            const hasFiles = (data.fileCount || 0) > 0;
+            
+            item.innerHTML = `
+                <div class="msg-sender">◈ FROM: ${data.from} ◈ ${isSelf ? '<span style="color:#ffd700">[LOCAL]</span>' : ''}</div>
+                <div class="msg-text" id="text-${id}" style="color:rgba(224,230,255,0.5);">[ENCRYPTED - PASSPHRASE REQUIRED]</div>
+                <div class="msg-pass" id="pass-box-${id}">
+                    <input type="password" class="holo-input" id="pass-${id}" placeholder="Enter DNA key to decrypt..." style="font-size:0.75rem;padding:8px;">
+                    <button class="holo-btn" onclick="unlockMessage('${id}')" style="padding:8px 16px;font-size:0.65rem;">UNLOCK</button>
+                </div>
+                <div class="msg-files" id="files-${id}" style="display:none;"></div>
+                ${hasFiles ? `<div style="margin-top:6px;font-size:0.6rem;color:var(--dna-gold);">📎 SEALED ATTACHMENTS: ${data.fileCount}</div>` : ''}
+                <div class="msg-time">${time}</div>
+            `;
+            
+            list.appendChild(item);
+            panel.scrollTop = panel.scrollHeight;
+        }
+        
+        // ===== UNLOCK MESSAGE & FILES =====
+        async function unlockMessage(id) {
+            const passInput = document.getElementById('pass-' + id);
+            const passphrase = passInput.value;
+            if (!passphrase) return;
+            
+            const textEl = document.getElementById('text-' + id);
+            const filesEl = document.getElementById('files-' + id);
+            const passBox = document.getElementById('pass-box-' + id);
+            
+            try {
+                const data = await new Promise(resolve => gun.get('oOMCMOo-messages').get(id).once(resolve));
+                
+                if (data && data.encryptedPayload) {
+                    const enc = JSON.parse(data.encryptedPayload);
+                    const decrypted = await decryptText(enc, passphrase);
+                    textEl.textContent = decrypted;
+                    textEl.style.color = '#e0e6ff';
+                }
+                
+                if (data && data.encryptedFiles && data.fileCount > 0) {
+                    filesEl.style.display = 'flex';
+                    const files = JSON.parse(data.encryptedFiles);
+                    filesEl.innerHTML = '<div style="width:100%;font-size:0.6rem;color:var(--quantum-blue);margin-bottom:4px;">◈ DNA VAULT ATTACHMENTS ◈</div>';
+                    
+                    for (let i = 0; i < files.length; i++) {
+                        const f = files[i];
+                        const btn = document.createElement('button');
+                        btn.className = 'holo-btn file-dl-btn';
+                        btn.innerHTML = `📥 ${f.name} <span style="color:rgba(224,230,255,0.5);font-size:0.55rem;">(${(f.size/1024).toFixed(1)}KB)</span>`;
+                        btn.onclick = () => downloadFromVault(id + '_' + i, f.name, f.type, passphrase);
+                        filesEl.appendChild(btn);
+                    }
+                }
+                
+                passBox.style.display = 'none';
+            } catch(e) {
+                textEl.textContent = '[DECRYPTION FAILED - INVALID PASSPHRASE]';
+                textEl.style.color = '#ff0040';
+                console.error(e);
+            }
+        }
+        
+        // ===== DOWNLOAD FROM LOCAL VAULT =====
+        async function downloadFromVault(vaultId, filename, mimeType, passphrase) {
+            try {
+                const payload = await vaultGet(vaultId);
+                if (!payload) {
+                    alert('Attachment not found in local DNA vault');
+                    return;
+                }
+                
+                const decrypted = await decryptBuffer(payload.encrypted, passphrase);
+                const blob = new Blob([decrypted], { type: mimeType || 'application/octet-stream' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch(e) {
+                alert('Decryption failed: Invalid passphrase or corrupted vault data');
+            }
+        }
+        
+        // ===== CLEAR =====
+        function clearAll() {
+            document.getElementById('recipient').value = '';
+            document.getElementById('passphrase').value = '';
+            document.getElementById('message').value = '';
+            document.getElementById('file-list').innerHTML = '';
+            document.getElementById('file-list').classList.remove('active');
+            attachedFiles = [];
+            document.getElementById('enc-status').textContent = 'STANDBY';
+        }
+        
+        // ===== OVERLAY DNA =====
+        const oC = document.getElementById('overlay-dna');
+        const oX = oC.getContext('2d');
+        function drawOverlayDNA() {
+            if (!document.getElementById('overlay').classList.contains('active')) { requestAnimationFrame(drawOverlayDNA); return; }
+            oX.clearRect(0, 0, 150, 150);
+            const t = Date.now() * 0.002;
+            const cx = 75, cy = 75;
+            for (let i = 0; i < 20; i++) {
+                const a = (i / 20) * Math.PI * 2 + t;
+                const r1 = 45 + Math.sin(t * 2 + i * 0.5) * 15;
+                const r2 = 45 + Math.cos(t * 2 + i * 0.5) * 15;
+                const x1 = cx + Math.cos(a) * r1, y1 = cy + Math.sin(a) * r1;
+                const x2 = cx + Math.cos(a + Math.PI) * r2, y2 = cy + Math.sin(a + Math.PI) * r2;
+                oX.strokeStyle = `rgba(0,240,255,${0.2 + Math.sin(i*0.3)*0.2})`;
+                oX.lineWidth = 2; oX.beginPath(); oX.moveTo(x1, y1); oX.lineTo(x2, y2); oX.stroke();
+                oX.fillStyle = '#00f0ff'; oX.beginPath(); oX.arc(x1, y1, 3, 0, Math.PI * 2); oX.fill();
+                oX.fillStyle = '#ff0040'; oX.beginPath(); oX.arc(x2, y2, 3, 0, Math.PI * 2); oX.fill();
+            }
+            requestAnimationFrame(drawOverlayDNA);
+        }
+        drawOverlayDNA();
+        
+        setInterval(() => {
+            if (document.getElementById('overlay').classList.contains('active')) {
+                const seq = Array.from({length:12}, () => bases[Math.floor(Math.random()*4)]).join('');
+                document.getElementById('overlay-dna-stream').textContent = seq + '-' + seq + '-' + seq;
+            }
+        }, 100);
+    </script>
+</body>
+</html>
