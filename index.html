@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000011">
+    <title>oOMCMOo Messenger - Zero Trust Quantum Encryption</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;500;700&family=VT323&family=Pacifico&family=Noto+Serif+JP:wght@400;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        /* ◈ THEME ENGINE VARIABLES ◈ */
+        :root {
+            --bg-base: #000011;
+            --lunar: #e0e6ff;
+            --acc-1: #00f0ff;
+            --acc-2: #ff0040;
+            --acc-3: #ffd700;
+            --glass: rgba(0, 15, 40, 0.88);
+            --font-brand: 'Orbitron', sans-serif;
+            --font-ui: 'Share Tech Mono', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+            --scanline-op: 0.5;
+            --bg-fx: none;
+        }
+
+        /* Skins */
+        body.theme-matrix { --bg-base: #000500; --lunar: #00ff00; --acc-1: #00ff44; --acc-2: #008800; --acc-3: #ffffff; --glass: rgba(0,20,0,0.9); --font-brand: 'VT323', monospace; --font-body: 'VT323', monospace; --scanline-op: 0.8; }
+        body.theme-baseball { --bg-base: #f0f0f5; --lunar: #111122; --acc-1: #0033a0; --acc-2: #d50032; --acc-3: #000000; --glass: rgba(255,255,255,0.9); --font-brand: 'Pacifico', cursive; }
+        body.theme-camo { --bg-base: #2c3525; --lunar: #b5c2a8; --acc-1: #5f7a4e; --acc-2: #435138; --acc-3: #8b9c7b; --glass: rgba(30,40,25,0.9); --bg-fx: repeating-radial-gradient(circle at center, transparent 0, transparent 20px, rgba(95,122,78,0.1) 21px); }
+        body.theme-lotus { --bg-base: #0a001a; --lunar: #e6ccff; --acc-1: #9933ff; --acc-2: #330066; --acc-3: #ff66cc; --glass: rgba(20,0,40,0.85); --font-brand: 'Noto Serif JP', serif; }
+        body.theme-zen { --bg-base: #fff5f8; --lunar: #4a3b42; --acc-1: #ffb3c6; --acc-2: #ff80a6; --acc-3: #8c6b76; --glass: rgba(255,240,245,0.9); --font-brand: 'Noto Serif JP', serif; }
+        body.theme-cyberpunk { --bg-base: #1a1a1a; --lunar: #fcee0a; --acc-1: #00ff00; --acc-2: #ff003c; --acc-3: #00f0ff; --glass: rgba(20,20,20,0.95); --font-brand: 'Orbitron', sans-serif; --scanline-op: 0.9; }
+        body.theme-sky { --bg-base: #e6f7ff; --lunar: #002244; --acc-1: #0099ff; --acc-2: #ff3333; --acc-3: #ffffff; --glass: rgba(240,248,255,0.9); }
+        body.theme-vaporwave { --bg-base: #2b00ff; --lunar: #00ffff; --acc-1: #ff00ff; --acc-2: #00ffff; --acc-3: #ffff00; --glass: rgba(40,0,100,0.8); --bg-fx: linear-gradient(180deg, #ff00ff 0%, #2b00ff 100%); }
+
+        body {
+            background: var(--bg-base);
+            background-image: var(--bg-fx);
+            color: var(--lunar);
+            font-family: var(--font-body);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        #dna-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .scan-matrix { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--acc-1), var(--acc-2), transparent); opacity: var(--scanline-op); animation: matrixScan 6s linear infinite; z-index: 100; pointer-events: none; }
+        @keyframes matrixScan { 0% { top: -2px; } 100% { top: 100vh; } }
+        
+        .hud-container { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; height: 100vh; padding: 15px; padding-bottom: 100px; overflow-y: auto; }
+        
+        .hud-header { text-align: center; margin-bottom: 15px; width: 100%; max-width: 900px; }
+        .brand { font-family: var(--font-brand); font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; background: linear-gradient(90deg, var(--lunar), var(--acc-1), var(--acc-2), var(--lunar)); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: brandShine 4s linear infinite; }
+        @keyframes brandShine { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+        
+        .holo-frame { background: var(--glass); border: 1px solid var(--acc-1); border-radius: 4px; padding: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.3); width: 100%; max-width: 900px; position: relative; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+        @media(min-width:600px) { .form-grid { grid-template-columns: 1fr 1fr; } .full-width { grid-column: 1 / -1; } }
+        .full-width { grid-column: 1 / -1; }
+        
+        .holo-input, .holo-select { width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--acc-1); color: var(--lunar); padding: 10px; font-family: var(--font-ui); font-size: 0.8rem; outline: none; transition: 0.3s; }
+        .holo-input:focus { border-color: var(--acc-2); box-shadow: 0 0 10px var(--acc-1); }
+        .input-label { display: block; font-family: var(--font-ui); font-size: 0.6rem; color: var(--lunar); margin-bottom: 4px; text-transform: uppercase; }
+        
+        .holo-btn { background: transparent; border: 1px solid var(--acc-1); color: var(--acc-1); padding: 8px 16px; font-family: var(--font-ui); cursor: pointer; text-transform: uppercase; transition: 0.3s; font-size: 0.7rem; font-weight: bold; }
+        .holo-btn:hover { background: var(--acc-1); color: var(--bg-base); box-shadow: 0 0 15px var(--acc-1); }
+        .holo-btn.primary { background: rgba(0,0,0,0.5); border-color: var(--acc-2); color: var(--acc-2); }
+        .holo-btn.primary:hover { background: var(--acc-2); color: #fff; }
+
+        .peer-box { display: flex; gap: 10px; align-items: flex-end; }
+        .peer-display { flex: 1; font-family: var(--font-ui); font-size: 1.1rem; color: var(--acc-3); letter-spacing: 2px; padding: 10px; background: rgba(0,0,0,0.5); border: 1px dashed var(--acc-3); text-align: center; }
+
+        .dna-vault-zone { border: 2px dashed var(--acc-1); padding: 20px; text-align: center; cursor: pointer; background: rgba(0,0,0,0.3); transition: 0.3s; grid-column: 1/-1;}
+        .dna-vault-zone:hover { background: rgba(0,255,255,0.1); border-color: var(--acc-2); }
+
+        .messages-panel { grid-column: 1 / -1; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.6); border: 1px solid var(--acc-1); padding: 10px; }
+        .msg-item { border-left: 2px solid var(--acc-1); padding: 8px; margin-bottom: 8px; background: rgba(255,255,255,0.05); }
+        .msg-sender { color: var(--acc-3); font-size: 0.6rem; font-family: var(--font-ui); }
+        .msg-text { margin-top: 5px; font-size: 0.9rem; }
+        .file-controls { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        
+        /* ◈ HOLOGRAPHIC PLASMA MODAL ◈ */
+        .plasma-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,5,15,0.95); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .plasma-modal.active { display: flex; }
+        .crt-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 2001; }
+        .plasma-content { position: relative; width: 90%; max-width: 1000px; height: 80vh; background: #000; border: 2px solid var(--acc-1); box-shadow: 0 0 40px var(--acc-1); border-radius: 8px; overflow: hidden; animation: crtFlicker 0.15s infinite; display:flex; justify-content:center; align-items:center; }
+        @keyframes crtFlicker { 0% { opacity: 0.98; } 50% { opacity: 1; } 100% { opacity: 0.99; } }
+        .plasma-content iframe, .plasma-content video, .plasma-content img { width: 100%; height: 100%; object-fit: contain; background: #000; border:none; }
+        .plasma-close { margin-top: 15px; z-index: 2002; }
+
+        /* ◈ WINAMP PLAYER STRIPE ◈ */
+        .winamp-stripe { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: rgba(0,0,0,0.9); border-top: 2px solid var(--acc-1); z-index: 1000; display: flex; align-items: center; padding: 0 20px; font-family: var(--font-ui); box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+        .wa-display { flex: 1; background: #001100; border: 1px inset var(--acc-1); height: 50px; margin: 0 20px; padding: 5px; color: var(--acc-1); font-size: 0.7rem; overflow: hidden; position: relative; display: flex; flex-direction: column; justify-content: center;}
+        .wa-track { white-space: nowrap; animation: scrollText 10s linear infinite; font-weight: bold; color: var(--acc-3); }
+        @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .wa-controls { display: flex; gap: 10px; align-items: center; }
+        .wa-btn { background: #222; border: 1px solid #555; color: var(--acc-1); width: 35px; height: 35px; cursor: pointer; border-radius: 4px; display: flex; justify-content: center; align-items: center; transition: 0.2s; box-shadow: inset 0 0 5px #000; }
+        .wa-btn:active { background: var(--acc-1); color: #000; transform: scale(0.95); }
+        .wa-volume { display: flex; flex-direction: column; align-items: center; width: 80px; }
+        .wa-vol-slider { width: 100%; cursor: pointer; accent-color: var(--acc-2); }
+        
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+</head>
+<body class="theme-nexus" id="body-theme">
+    <canvas id="dna-canvas"></canvas>
+    <div class="scan-matrix"></div>
+    
+    <div class="hud-container">
+        <div class="hud-header">
+            <div class="brand">oOMCMOo CORE</div>
+            
+            <div class="input-group" style="margin-top:10px;">
+                <select class="holo-select" id="theme-selector" onchange="changeTheme()">
+                    <option value="theme-nexus">Skin: Nexus Laser</option>
+                    <option value="theme-matrix">Skin: Matrix Protocol</option>
+                    <option value="theme-cyberpunk">Skin: Cyberpunk Petrol</option>
+                    <option value="theme-baseball">Skin: Varsity Script</option>
+                    <option value="theme-camo">Skin: Woodland Sonar</option>
+                    <option value="theme-lotus">Skin: Blue Lotus Esoteric</option>
+                    <option value="theme-zen">Skin: Cherry Blossom Zen</option>
+                    <option value="theme-sky">Skin: Sky & Red Aero</option>
+                    <option value="theme-vaporwave">Skin: Vaporwave Solar Flare</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="holo-frame">
+            <div class="form-grid">
+                
+                <div class="full-width">
+                    <label class="input-label">YOUR SECURE PEER ID</label>
+                    <div class="peer-box">
+                        <div class="peer-display" id="my-peer-id">GENERATING...</div>
+                        <input type="text" id="custom-id-input" class="holo-input" placeholder="Custom ID...">
+                        <button class="holo-btn" onclick="swapPeerId()">SWAP ID</button>
+                    </div>
+                </div>
+                
+                <div class="input-group full-width">
+                    <label class="input-label">Recipient Peer ID</label>
+                    <input type="text" class="holo-input" id="recipient" placeholder="Target ID">
+                </div>
+                
+                <div class="input-group full-width">
+                    <label class="input-label">Zero-Trust DNA Passphrase</label>
+                    <input type="password" class="holo-input" id="passphrase" placeholder="Encryption Key...">
+                </div>
+                
+                <div class="input-group full-width">
+                    <label class="input-label">Transmission Payload</label>
+                    <textarea class="holo-input" id="message" placeholder="Enter secure message..." style="height:60px;"></textarea>
+                </div>
+                
+                <div class="dna-vault-zone" onclick="document.getElementById('file-input').click()">
+                    <div style="font-size: 2rem;">🧬</div>
+                    <div style="font-family: var(--font-ui); color: var(--acc-1);">TAP TO ATTACH SECURE VAULT FILES</div>
+                    <div style="font-size:0.6rem; margin-top:5px;">(PDF/MP3/MP4/HTML/IMG) - Auto-Decrypted via Plasma Screen</div>
+                    <input type="file" id="file-input" multiple onchange="handleFiles(this.files)" style="display:none;">
+                </div>
+                
+                <div id="file-list" class="full-width" style="font-family: var(--font-ui); font-size: 0.7rem; color:var(--acc-3);"></div>
+                
+                <div class="full-width" style="display:flex; justify-content:center; gap: 15px; margin-top:10px;">
+                    <button class="holo-btn" onclick="clearAll()">PURGE</button>
+                    <button class="holo-btn primary" onclick="transmit()">TRANSMIT PAYLOAD</button>
+                </div>
+                
+                <div class="messages-panel full-width" id="messages-panel">
+                    <div style="color:var(--acc-1); font-family:var(--font-ui); font-size:0.8rem; border-bottom:1px solid var(--acc-1); margin-bottom:10px;">◈ LIVE DECRYPTED STREAM ◈</div>
+                    <div id="messages-list"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="plasma-modal" id="plasma-modal">
+        <div class="crt-overlay"></div>
+        <div class="plasma-content" id="plasma-content">
+            </div>
+        <button class="holo-btn plasma-close" onclick="closePlasma()">TERMINATE PREVIEW</button>
+    </div>
+
+    <div class="winamp-stripe">
+        <div class="wa-controls">
+            <button class="wa-btn" onclick="audioPlayer.previous()">⏮</button>
+            <button class="wa-btn" onclick="audioPlayer.togglePlay()" id="wa-play-btn">▶</button>
+            <button class="wa-btn" onclick="audioPlayer.next()">⏭</button>
+        </div>
+        <div class="wa-display">
+            <div style="font-size:0.5rem; color:var(--acc-2);">oOMCMOo AUDIO SUBSYSTEM</div>
+            <div class="wa-track" id="wa-track-name">NO MEDIA LOADED</div>
+            <div style="font-size:0.5rem;" id="wa-time">00:00 / 00:00</div>
+        </div>
+        <div class="wa-volume">
+            <span style="font-size:0.5rem; color:var(--acc-1);">VOL</span>
+            <input type="range" class="wa-vol-slider" id="wa-vol" min="0" max="1" step="0.05" value="0.5" onchange="audioPlayer.setVolume(this.value)">
+        </div>
+        <audio id="core-audio" style="display:none;"></audio>
+    </div>
+
+    <script>
+        // ◈ CRYPTO CORE ◈
+        async function deriveKey(passphrase, salt) {
+            const keyMat = await crypto.subtle.importKey('raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+            return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, keyMat, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+        }
+        async function encryptData(data, passphrase, isText=true) {
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const key = await deriveKey(passphrase, salt);
+            const encoded = isText ? new TextEncoder().encode(data) : data;
+            const enc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoded);
+            return { salt: Array.from(salt), iv: Array.from(iv), data: Array.from(new Uint8Array(enc)) };
+        }
+        async function decryptData(encObj, passphrase, isText=true) {
+            const key = await deriveKey(passphrase, new Uint8Array(encObj.salt));
+            const dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: new Uint8Array(encObj.iv) }, key, new Uint8Array(encObj.data));
+            return isText ? new TextDecoder().decode(dec) : dec;
+        }
+
+        // ◈ GUN P2P NETWORK (Multi-instance safe) ◈
+        // Disabled localStorage so multiple tabs on same machine don't merge states.
+        let gun = Gun({ 
+            peers: ['https://gun-manhattan.herokuapp.com/gun', 'https://relay.peerjs.com/gun', 'https://gun-rs.iris.to/gun'],
+            localStorage: false
+        });
+
+        let myPeerId = '';
+        let activeSubscription = null;
+
+        function initNetwork(newId) {
+            myPeerId = newId;
+            document.getElementById('my-peer-id').textContent = myPeerId;
+            
+            // Re-subscribe
+            if(activeSubscription) activeSubscription.off();
+            
+            activeSubscription = gun.get('oomcmoo-global-stream-v2').map().on((data, id) => {
+                if (!data || data.to !== myPeerId) return; // Strict ID filtering
+                if (document.getElementById('msg-' + id)) return; // Prevent dupes
+                displayMessageUI(data, id);
+            });
+        }
+
+        function swapPeerId() {
+            const custom = document.getElementById('custom-id-input').value.trim();
+            const newId = custom || ('ID_' + Math.random().toString(36).substr(2, 6).toUpperCase());
+            document.getElementById('custom-id-input').value = '';
+            initNetwork(newId);
+        }
+
+        // Initialize First ID
+        swapPeerId();
+
+        // ◈ THEME ENGINE ◈
+        function changeTheme() {
+            const theme = document.getElementById('theme-selector').value;
+            document.getElementById('body-theme').className = theme;
+        }
+
+        // ◈ FILE HANDLING ◈
+        let attachedFiles = [];
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    attachedFiles.push({ name: file.name, type: file.type, buffer: e.target.result });
+                    document.getElementById('file-list').innerHTML += `<div>📎 ${file.name} ready for encryption.</div>`;
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // ◈ TRANSMIT ◈
+        async function transmit() {
+            const recipient = document.getElementById('recipient').value.trim();
+            const passphrase = document.getElementById('passphrase').value;
+            const message = document.getElementById('message').value;
+            
+            if (!recipient || !passphrase) return alert('Recipient & Passphrase Required!');
+            
+            const encMsg = message ? await encryptData(message, passphrase, true) : null;
+            const encFiles = [];
+            
+            for(let f of attachedFiles) {
+                const enc = await encryptData(f.buffer, passphrase, false);
+                encFiles.push({ name: f.name, type: f.type, encrypted: enc });
+            }
+            
+            const msgId = 'm_' + Date.now();
+            const payload = {
+                from: myPeerId,
+                to: recipient,
+                timestamp: Date.now(),
+                msgObj: encMsg ? JSON.stringify(encMsg) : null,
+                filesObj: encFiles.length ? JSON.stringify(encFiles) : null
+            };
+
+            gun.get('oomcmoo-global-stream-v2').get(msgId).put(payload);
+            
+            // Local Echo
+            displayMessageUI(payload, msgId + '-local', true);
+            clearAll();
+        }
+
+        function clearAll() {
+            document.getElementById('message').value = '';
+            document.getElementById('file-list').innerHTML = '';
+            attachedFiles = [];
+        }
+
+        // ◈ UI RENDERING ◈
+        let vaultMemory = {}; // Store raw encrypted files in session
+
+        function displayMessageUI(data, id, isSelf=false) {
+            const list = document.getElementById('messages-list');
+            const item = document.createElement('div');
+            item.className = 'msg-item';
+            item.id = 'msg-' + id;
+            
+            vaultMemory[id] = { msg: data.msgObj, files: data.filesObj };
+
+            item.innerHTML = `
+                <div class="msg-sender">${isSelf ? '▶ SENT TO: ' + data.to : '◀ RCV FROM: ' + data.from}</div>
+                <div style="display:flex; gap:10px; margin-top:5px;" id="unlock-box-${id}">
+                    <input type="password" id="pass-${id}" class="holo-input" style="width:150px; padding:5px;" placeholder="Passphrase...">
+                    <button class="holo-btn primary" onclick="unlockPayload('${id}')">DECRYPT</button>
+                </div>
+                <div class="msg-text" id="text-${id}" style="display:none;"></div>
+                <div class="file-controls" id="files-${id}" style="display:none;"></div>
+            `;
+            list.prepend(item);
+        }
+
+        async function unlockPayload(id) {
+            const pass = document.getElementById('pass-' + id).value;
+            const data = vaultMemory[id];
+            
+            try {
+                if(data.msg) {
+                    const decText = await decryptData(JSON.parse(data.msg), pass, true);
+                    const txtEl = document.getElementById('text-' + id);
+                    txtEl.textContent = decText;
+                    txtEl.style.display = 'block';
+                }
+                
+                if(data.files) {
+                    const files = JSON.parse(data.files);
+                    const fEl = document.getElementById('files-' + id);
+                    fEl.style.display = 'flex';
+                    fEl.innerHTML = '';
+                    
+                    for(let i=0; i<files.length; i++) {
+                        const f = files[i];
+                        const decBuf = await decryptData(f.encrypted, pass, false);
+                        const blob = new Blob([decBuf], { type: f.type || 'application/octet-stream' });
+                        const blobUrl = URL.createObjectURL(blob);
+                        
+                        fEl.innerHTML += `<button class="holo-btn" onclick="openPlasma('${blobUrl}', '${f.type}', '${f.name}')">👁 PREVIEW: ${f.name}</button>`;
+                    }
+                }
+                document.getElementById('unlock-box-' + id).style.display = 'none';
+            } catch(e) {
+                alert("DECRYPTION FAILED. Invalid Passphrase or Corrupt DNA Sequence.");
+            }
+        }
+
+        // ◈ HOLOGRAPHIC PLASMA PREVIEW & WINAMP PIPELINE ◈
+        function openPlasma(url, type, name) {
+            const modal = document.getElementById('plasma-modal');
+            const content = document.getElementById('plasma-content');
+            content.innerHTML = ''; // clear
+            
+            if(type.startsWith('audio/')) {
+                audioPlayer.addToPlaylist(url, name);
+                alert(`Audio routed to Winamp Subsystem: ${name}`);
+                return; // Don't open modal for audio
+            }
+            
+            modal.classList.add('active');
+            
+            if(type.startsWith('image/')) {
+                content.innerHTML = `<img src="${url}" />`;
+            } else if (type.startsWith('video/')) {
+                content.innerHTML = `<video src="${url}" controls autoplay></video>`;
+            } else {
+                // PDF, HTML, Text fallback
+                content.innerHTML = `<iframe src="${url}"></iframe>`;
+            }
+        }
+
+        function closePlasma() {
+            document.getElementById('plasma-modal').classList.remove('active');
+            document.getElementById('plasma-content').innerHTML = '';
+        }
+
+        // ◈ WINAMP AUDIO PLAYER CORE ◈
+        const audioPlayer = {
+            el: document.getElementById('core-audio'),
+            playlist: [],
+            currentIndex: -1,
+            
+            addToPlaylist: function(url, name) {
+                this.playlist.push({url, name});
+                if(this.currentIndex === -1) this.play(0);
+            },
+            play: function(index) {
+                if(this.playlist.length === 0) return;
+                this.currentIndex = index;
+                this.el.src = this.playlist[index].url;
+                this.el.play();
+                document.getElementById('wa-play-btn').textContent = '⏸';
+                document.getElementById('wa-track-name').textContent = this.playlist[index].name;
+            },
+            togglePlay: function() {
+                if(this.playlist.length === 0) return;
+                if(this.el.paused) { this.el.play(); document.getElementById('wa-play-btn').textContent = '⏸'; }
+                else { this.el.pause(); document.getElementById('wa-play-btn').textContent = '▶'; }
+            },
+            next: function() {
+                if(this.playlist.length === 0) return;
+                let nextIdx = (this.currentIndex + 1) % this.playlist.length;
+                this.play(nextIdx);
+            },
+            previous: function() {
+                if(this.playlist.length === 0) return;
+                let prevIdx = (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
+                this.play(prevIdx);
+            },
+            setVolume: function(val) {
+                this.el.volume = val;
+            }
+        };
+
+        audioPlayer.el.addEventListener('ended', () => audioPlayer.next());
+        audioPlayer.el.addEventListener('timeupdate', () => {
+            const format = (t) => Math.floor(t/60).toString().padStart(2,'0') + ':' + Math.floor(t%60).toString().padStart(2,'0');
+            const cur = audioPlayer.el.currentTime || 0;
+            const dur = audioPlayer.el.duration || 0;
+            document.getElementById('wa-time').textContent = `${format(cur)} / ${format(dur)}`;
+        });
+
+        // ◈ DNA BACKGROUND ANIMATION (Preserved & Optimized) ◈
+        const canvas = document.getElementById('dna-canvas');
+        const ctx = canvas.getContext('2d');
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        
+        function animateDNA() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const t = Date.now() * 0.001;
+            const styleObj = getComputedStyle(document.body);
+            const c1 = styleObj.getPropertyValue('--acc-1').trim();
+            const c2 = styleObj.getPropertyValue('--acc-2').trim();
+            
+            ctx.strokeStyle = c1;
+            ctx.lineWidth = 1;
+            for(let i=0; i<20; i++) {
+                const y = (i * 40) % canvas.height;
+                const xBase = canvas.width / 2;
+                const offset = Math.sin(t + i*0.5) * 100;
+                ctx.beginPath();
+                ctx.moveTo(xBase - offset, y);
+                ctx.lineTo(xBase + offset, y);
+                ctx.stroke();
+                ctx.fillStyle = c2;
+                ctx.beginPath(); ctx.arc(xBase - offset, y, 3, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(xBase + offset, y, 3, 0, Math.PI*2); ctx.fill();
+            }
+            requestAnimationFrame(animateDNA);
+        }
+        animateDNA();
+
+    </script>
+</body>
+</html>
